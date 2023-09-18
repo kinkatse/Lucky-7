@@ -1,0 +1,67 @@
+.stack {
+    flex-direction: row-reverse;
+    margin: 5px;
+    margin-bottom: 80px;
+    height: 300px;
+}
+
+li {
+    flex-direction: column;
+    width: 20px;
+}
+
+.card {
+    height: 200px;
+    filter: drop-shadow(0px 0px 1.5px rgba(0,0,0,0.4));
+}
+
+.slap {
+    margin: 15px;
+    margin-top: 5px;
+    padding: 10px;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.top {
+    position: absolute;
+    z-index: 6;
+}
+
+.second {
+    position: absolute;
+    margin-top: 20px;
+    transform: rotate(-5deg);
+    z-index: 5;
+}
+
+.third {
+    position: absolute;
+    margin-top: 40px;
+    transform: rotate(-10deg);
+    z-index: 4;
+}
+
+.fourth {
+    position: absolute;
+    margin-top: 60px;
+    transform: rotate(-15deg);
+    z-index: 3;
+    opacity: 60%;
+}
+
+.fifth {
+    position: absolute;
+    margin-top: 80px;
+    transform: rotate(-20deg);
+    z-index: 3;
+    opacity: 20%;
+}
+
+.red-button {
+    background-color: #FF2727;
+}
+
+.blue-button {
+    background-color: #4A77FF;
+}

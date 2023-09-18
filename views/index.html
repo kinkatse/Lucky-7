@@ -1,0 +1,137 @@
+<!-- This is a static file -->
+<!-- served from your routes in server.js -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Lucky 7 Card Game">
+
+    <title>Lucky 7</title>
+
+    <link id="favicon" rel="icon" href="https://i.imgur.com/TYq2hYE.png" type="image/x-icon">
+
+    <!-- import socketio -->
+    <!-- <script src="/socket.io/socket.io.js"></script> -->
+    <script src="/socket.io/socket.io.js"></script>
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script> -->
+    <!-- import the webpage's stylesheet -->
+    <link rel="stylesheet" href="main.css">
+    <!-- import the webpage's client-side javascript file -->
+    <script src="main.js"></script>
+  </head>
+  <body>
+
+    <h1 class="title">Lucky 7</h1>
+
+    <div class="page-header container">
+      <div class="score-container">
+        <h1 id="red-score">Red Score: 0</h1>
+        <h1 id="blue-score">Blue Score: 0</h1>
+      </div>
+      <div class="player-info">
+        <button class="red-button slap" style="display: none">SLAP!</button>
+        <button class="blue-button slap" style="display: none">SLAP!</button>
+        <h1 class="gameover message" style="display: none">Gameover!</h1>
+        <h1 class="gameover winner" style="display: none"></h1>
+      </div>
+    </div>
+
+    <div class="logo">
+      <img src="images/Lucky-7-Logo.png" alt="">
+    </div>
+
+    <ul class="stack container">
+      <li id="top">
+        <img src="https://deckofcardsapi.com/static/img/back.png" class="top card">
+      </li>
+      <li id="prev-one">
+        <img src="https://deckofcardsapi.com/static/img/back.png" class="second card">
+      </li>
+      <li id="prev-two">
+        <img src="https://deckofcardsapi.com/static/img/back.png" class="third card">
+      </li>
+      <li id="prev-three">
+        <img src="https://deckofcardsapi.com/static/img/back.png" class="fourth card">
+      </li>
+      <li id="prev-four">
+        <img src="https://deckofcardsapi.com/static/img/back.png" class="fifth card">
+      </li>
+    </ul>
+
+    <div class="game-options container">
+      <!-- <button class="join-room">Join Room</button> -->
+      <h1 class="gameover play-again" style="display: none">Play Again?</h1>
+      <div class="play-buttons container">
+        <button class="play easy" mode="easy">Play Slow</button>
+        <button class="play reg" mode="reg">Play Regular</button>
+        <button class="play pro" mode="pro">Play Extreme</button>
+      </div>
+      <button id="stop-dealer" style="display: none">Stop Dealer</button>
+    </div>
+
+    <!-- <div class="canvas-container">
+      <canvas id="canvas"></canvas>
+    </div>
+    <video id="video" autoplay style="display: none" ></video> -->
+    
+    <audio id="start-game" style="display: none" preload="auto" controls="none" src="audio/start-game-audio.wav"></audio>
+    <audio id="click-button" style="display: none" preload="auto" controls="none" src="audio/click-button-audio.wav"></audio>
+    <audio id="deal-card-a" style="display: none" preload="auto" controls="none" src="audio/deal-card-audio.wav"></audio>
+    <audio id="deal-card-b" style="display: none" preload="auto" controls="none" src="audio/deal-card-audio.wav"></audio>
+    <audio id="deal-card-c" style="display: none" preload="auto" controls="none" src="audio/deal-card-audio.wav"></audio>
+    <audio id="deal-card-d" style="display: none" preload="auto" controls="none" src="audio/deal-card-audio.wav"></audio>
+    <audio id="player-misclicks" style="display: none" preload="auto" controls="none" src="audio/player-misclicks-audio.wav"></audio>
+    <audio id="points" style="display: none" preload="auto" controls="none" src="audio/points-audio.wav"></audio>
+    <audio id="gameover" style="display: none" preload="auto" controls="none" src="audio/gameover-audio.wav"></audio>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <!-- <header>
+      <h1>
+        A Dream of the Future
+      </h1>
+    </header>
+
+    <main>
+      <p class="bold">Oh hi,</p>
+      
+      <p>Tell me your hopes and dreams:</p>
+      
+      <form>
+        <input name="dream" aria-label="a new dream" type="text" maxlength="100" placeholder="Dreams!">
+        <button type="submit" id="submit-dream">Submit Dream</button>
+      </form>
+      
+      <section class="dreams">
+        <ul id="dreams"></ul>
+        <button id="clear-dreams">
+          Clear Dreams
+        </button>
+      </section>
+      
+    </main>
+
+    <footer>
+      Made with <a href="https://glitch.com">Glitch</a>!
+    </footer> -->
+
+    <!-- include the Glitch button to show what the webpage is about and
+          to make it easier for folks to view source and remix -->
+    <!-- <div class="glitchButton" style="position:fixed;top:20px;right:20px;"></div>
+    <script src="https://button.glitch.me/button.js" defer></script> -->
+  </body>
+</html>
