@@ -54,8 +54,6 @@ class GameView {
     // }
 
     playersJoined() {
-        // debugger
-        // this.elements['playButtons'].style.display = "block"
         this.elements['playButtons'].addEventListener("click", (e) => {
             this.mode = e.target.getAttribute("mode")
             this.game = new Game(this.ctx, this.playerRed, this.playerBlue, this.socket, this.elements)

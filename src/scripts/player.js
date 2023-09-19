@@ -13,10 +13,10 @@ class Player {
         this.scoreTextEl.innerText = `${this.scoreNewText} SCORE: 0`
     }
 
-    // setGame(game) {
-    //     if (!this.game) this.game = game
-    //     this.socket.on("game", game => this.game = game)
-    // }
+    setGame(game) {
+        if (!this.game) this.game = game
+        this.socket.on("game", game => this.game = game)
+    }
 
     setScore() {
         this.socket.on("slap", data => {

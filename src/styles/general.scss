@@ -78,7 +78,7 @@ button:hover {
 .page-header {
     display: flex;
     flex-direction: column;
-    margin: 5px;
+    // margin: 5px;
 }
 
 .game-options {
@@ -95,6 +95,8 @@ button:hover {
 .score-container {
     background-color: #30B22D;
     margin: 10px;
+    margin-left: 0;
+    margin-right: 0;
 }
 
 .score-container h1 {

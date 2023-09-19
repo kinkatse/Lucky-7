@@ -11,6 +11,7 @@ class Game {
 
         this.redSlapEl = this.elements['redSlap']
         this.blueSlapEl = this.elements['blueSlap']
+        this.prevFiveEl = document.getElementById("prev-fifth")
         this.prevFourEl = document.getElementById("prev-four")
         this.prevThreeEl = document.getElementById("prev-three")
         this.prevTwoEl = document.getElementById("prev-two")
@@ -26,12 +27,14 @@ class Game {
         this.playerRed.resetPlayer()
         this.playerBlue.resetPlayer()
         
+        this.prevFiveEl.dataset.card = null
         this.prevFourEl.dataset.card = null
         this.prevThreeEl.dataset.card = null
         this.prevTwoEl.dataset.card = null
         this.prevOneEl.dataset.card = null
         this.topEl.dataset.card = null
 
+        this.prevFiveEl.children[0].src = "https://deckofcardsapi.com/static/img/back.png"
         this.prevFourEl.children[0].src = "https://deckofcardsapi.com/static/img/back.png"
         this.prevThreeEl.children[0].src = "https://deckofcardsapi.com/static/img/back.png"
         this.prevTwoEl.children[0].src = "https://deckofcardsapi.com/static/img/back.png"
@@ -43,10 +46,10 @@ class Game {
                 this.difficultySpeed = 1500;
                 break;
             case "reg":
-                this.difficultySpeed = 1000;
+                this.difficultySpeed = 1100;
                 break;
             case "pro":
-                this.difficultySpeed = 500;
+                this.difficultySpeed = 700;
                 break;
             default:
                 this.difficultySpeed = 1500;
@@ -105,14 +108,14 @@ class Game {
 
     update() {
         // this.playerRed.setGame(this)
-        // if (this.playerBlue.game) {
-        //     this would be where we update the other user's interface
-        // }
-        // this.playerBlue.setGame(this)
+        if (this.playerBlue.game) {
+            // this would be where we update the other user's interface
+        }
+        this.playerBlue.setGame(this)
     }
 
     checkGameOver() {
-        if (this.playerRed.score > 76 || this.playerBlue.score > 76 || this.remaining === 0) {
+        if (this.playerRed.score > 10 || this.playerBlue.score > 10 || this.remaining === 0) {
             this.gameOver()
         }
     }
@@ -161,6 +164,31 @@ class Game {
     }
 
     placeCard() {
+        this.prevFiveEl.children[0].classList.remove("sixth")
+        this.prevFourEl.children[0].classList.remove("fifth")
+        this.prevThreeEl.children[0].classList.remove("fourth")
+        this.prevTwoEl.children[0].classList.remove("third")
+        this.prevOneEl.children[0].classList.remove("second")
+        this.topEl.children[0].classList.remove("top")
+
+        this.prevFiveEl.offsetWidth
+        this.prevFourEl.offsetWidth
+        this.prevThreeEl.offsetWidth
+        this.prevTwoEl.offsetWidth
+        this.prevOneEl.offsetWidth
+        this.topEl.offsetWidth
+
+        this.prevFiveEl.children[0].classList.add("sixth")
+        this.prevFourEl.children[0].classList.add("fifth")
+        this.prevThreeEl.children[0].classList.add("fourth")
+        this.prevTwoEl.children[0].classList.add("third")
+        this.prevOneEl.children[0].classList.add("second")
+        this.topEl.children[0].classList.add("top")
+
+        if (this.prevFourEl.dataset.card) {
+            this.prevFiveEl.dataset.card = this.prevFourEl.dataset.card
+            this.prevFiveEl.children[0].src = this.prevFourEl.children[0].src
+        }
         if (this.prevThreeEl.dataset.card) {
             this.prevFourEl.dataset.card = this.prevThreeEl.dataset.card
             this.prevFourEl.children[0].src = this.prevThreeEl.children[0].src
@@ -179,7 +207,6 @@ class Game {
             this.prevOneEl.dataset.card = this.topEl.dataset.card
             this.prevOneEl.children[0].src = this.topEl.children[0].src
         }
-
         this.topEl.dataset.card = `${this.drawnCard.value} ${this.drawnCard.suit}`
         this.topEl.children[0].src = this.drawnCard.image
     }
