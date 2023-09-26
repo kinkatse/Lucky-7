@@ -1,16 +1,19 @@
 import AudioUtil from "./audioUtil"
 
 class Game {
-    constructor(ctx, playerRed, playerBlue, socket, elements) {
-        this.ctx = ctx
+    constructor(player, elements, socket) {
+        // this.ctx = ctx
         this.difficultySpeed = 1000 // 1500 slow speed // 1000 medium speed // 500 fast speed
-        this.playerRed = playerRed
-        this.playerBlue = playerBlue
+        // this.playerRed = playerRed
+        // this.playerBlue = playerBlue
+        this.player = player
+        this.score = { red: 0, blue: 0 }
         this.socket = socket
         this.elements = elements
 
-        this.redSlapEl = this.elements['redSlap']
-        this.blueSlapEl = this.elements['blueSlap']
+        // this.redSlapEl = this.elements['redSlap']
+        // this.blueSlapEl = this.elements['blueSlap']
+        this.slapEl = this.elements['slap']
         this.prevFiveEl = document.getElementById("prev-fifth")
         this.prevFourEl = document.getElementById("prev-four")
         this.prevThreeEl = document.getElementById("prev-three")
@@ -24,8 +27,9 @@ class Game {
         this.drawnCard = null
         this.discard = []
         this.topDeck = []
-        this.playerRed.resetPlayer()
-        this.playerBlue.resetPlayer()
+        this.player.resetPlayer()
+        // this.playerRed.resetPlayer()
+        // this.playerBlue.resetPlayer()
         
         this.prevFiveEl.dataset.card = null
         this.prevFourEl.dataset.card = null
@@ -62,16 +66,31 @@ class Game {
         
         await this.shuffleDecks()
         
-        this.redSlapEl.style.display = "block"
-        this.blueSlapEl.style.display = "block"
+        this.slapEl.style.display = "block"
+        // this.redSlapEl.style.display = "block"
+        // this.blueSlapEl.style.display = "block"
 
         // Save reference to eventHander for removing it later
-        this.redButtonHandler = this.playerRed.runEventListeners(this, this.socket)
-        this.blueButtonHandler = this.playerBlue.runEventListeners(this, this.socket)
+        // this.redButtonHandler = this.playerRed.runEventListeners(this, this.socket)
+        // this.blueButtonHandler = this.playerBlue.runEventListeners(this, this.socket)
+        this.buttonHandler = this.player.runEventListeners(this, this.socket)
 
         // this.socket.emit("game", this)
-        this.playerRed.setScore(this.socket)
-        this.playerBlue.setScore(this.socket)
+        this.player.setScore(this.socket, this)
+        // this.playerRed.setScore(this.socket)
+        // this.playerBlue.setScore(this.socket)
+        this.dealerLoop()
+    }
+
+    async connectGame(mode) {
+        this.resetToDefault(mode)
+        
+        await this.shuffleDecks()
+        
+        this.slapEl.style.display = "block"
+        this.buttonHandler = this.player.runEventListeners(this, this.socket)
+
+        this.player.setScore(this.socket, this)
         this.dealerLoop()
     }
 
@@ -88,8 +107,6 @@ class Game {
     dealerLoop() {
         // this.update()
         this.interval = setInterval(async () => {
-            // Updating the score
-            
             await this.drawCard()
             // Updating our array of cards to keep track of for point value
             this.topDeck.unshift(this.drawnCard)
@@ -106,16 +123,19 @@ class Game {
         })
     }
 
-    update() {
-        // this.playerRed.setGame(this)
-        if (this.playerBlue.game) {
-            // this would be where we update the other user's interface
-        }
-        this.playerBlue.setGame(this)
-    }
+    // update() {
+    //     // this.playerRed.setGame(this)
+    //     if (this.playerBlue.game) {
+    //         // this would be where we update the other user's interface
+    //     }
+    //     this.playerBlue.setGame(this)
+    // }
 
     checkGameOver() {
-        if (this.playerRed.score > 10 || this.playerBlue.score > 10 || this.remaining === 0) {
+        // if (this.playerRed.score > 10 || this.playerBlue.score > 10 || this.remaining === 0) {
+        //     this.gameOver()
+        // }
+        if (this.score["red"] > 10 || this.score["blue"] > 10 || this.remaining === 0) {
             this.gameOver()
         }
     }
@@ -126,18 +146,31 @@ class Game {
         clearInterval(this.interval)
 
         const stopDealer = this.elements['stopDealer']
-        this.redSlapEl.removeEventListener("click", this.redButtonHandler)
-        this.blueSlapEl.removeEventListener("click", this.blueButtonHandler)
-        this.redSlapEl.style.display = "none"
-        this.blueSlapEl.style.display = "none"
+        this.slapEl.removeEventListener("click", this.buttonHandler)
+        this.slapEl.style.display = "none"
+        // this.redSlapEl.removeEventListener("click", this.redButtonHandler)
+        // this.blueSlapEl.removeEventListener("click", this.blueButtonHandler)
+        // this.redSlapEl.style.display = "none"
+        // this.blueSlapEl.style.display = "none"
         stopDealer.style.display = "none"
 
         const winner = this.elements['winner']
         
-        if (this.playerRed.score > this.playerBlue.score) {
+        // if (this.playerRed.score > this.playerBlue.score) {
+        //     winner.innerText = "Red Player Wins!"
+        //     winner.style.color = "#FF2727";
+        // } else if (this.playerRed.score < this.playerBlue.score) {
+        //     winner.innerText = "Blue Player Wins!"
+        //     winner.style.color = "#4A77FF";
+        // } else {
+        //     winner.innerText = "It's a Tie!"
+        //     winner.style.color = "black";
+        // }
+
+        if (this.score["red"] > this.score["blue"]) {
             winner.innerText = "Red Player Wins!"
             winner.style.color = "#FF2727";
-        } else if (this.playerRed.score < this.playerBlue.score) {
+        } else if (this.score["red"] < this.score["blue"]) {
             winner.innerText = "Blue Player Wins!"
             winner.style.color = "#4A77FF";
         } else {

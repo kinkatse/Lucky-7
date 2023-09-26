@@ -108,6 +108,20 @@ io.on('connection', (socket) => {
     socket.broadcast.emit('connect-player', color);
   // });
 
+  socket.on('start-game', (gameData) => {
+    console.log(gameData)
+    // Emit the start-game clients
+    if (gameData.color === "red") {
+      console.log("Sending other player they are blue")
+      gameData.color = "blue"
+      socket.broadcast.emit('connect-game', gameData);
+    } else {
+      console.log("Sending other player they are red")
+      gameData.color = "red"
+      socket.broadcast.emit('connect-game', gameData);
+    }
+  });
+
   socket.on('slap', (data) => {
     const { color, topDeck, scoreValue } = data;
     
@@ -116,7 +130,6 @@ io.on('connection', (socket) => {
       topDeck,
       scoreValue
     };
-    // console.log("slap info", slap)
 
     // Emit the slap to all other clients
     socket.broadcast.emit('slap', slap);
