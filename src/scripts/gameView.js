@@ -4,7 +4,7 @@ import AudioUtil from "./audioUtil"
 import { io } from "socket.io-client"
 
 class GameView {
-    constructor (ctx, video) {
+    constructor (ctx, video, socket) {
         // this.video = video
         this.ctx = ctx
         this.socket = io.connect(window.location.origin);
@@ -24,6 +24,7 @@ class GameView {
         }
 
         this.playersJoined()
+        this.gameLoop()
         // this.addJoinRoomEventListener()
         // this.testSocket()
     }
@@ -55,18 +56,87 @@ class GameView {
 
     playersJoined() {
         this.elements['playButtons'].addEventListener("click", (e) => {
+            debugger
             this.mode = e.target.getAttribute("mode")
-            this.game = new Game(this.ctx, this.playerRed, this.playerBlue, this.socket, this.elements)
+            this.game = new Game(this.ctx, this.playerRed, this.playerBlue, this.socket, this.elements, this)
             AudioUtil.playStartGame()
             this.game.startGame(this.mode)
-            this.elements['logo'].style.display = "none";
-            this.elements['gameOver'].style.display = "none";
-            this.elements['winner'].style.display = "none";
-            this.elements['redSlap'].style.display = "block"
-            this.elements['blueSlap'].style.display = "block"
-            this.elements['stopDealer'].style.display = "block"
-            this.elements['playButtons'].style.display = "none"
-            this.elements['playAgain'].style.display = "none"
+            debugger
+            clearInterval(this.checkStartedInterval)
+            this.setGame()
+            // this.game.dealerLoop(this.updateGame.bind(this))
+            // await this.game.deal()
+            this.gameStartingSetting()
+            this.setGameLoopInterval()
+        })
+    }
+
+    gameLoop() {
+        this.checkStartedInterval = setInterval(async () => {
+            // debugger
+            this.updateGame()
+            // since the other player should have cleared interval if they started, this
+            // should only trigger if the other player receives that the other player started
+            if (this.started) {
+                debugger
+                AudioUtil.playStartGame()
+                this.elements['redSlap'].style.display = "block"
+                this.elements['blueSlap'].style.display = "block"
+                this.redButtonHandler = this.playerRed.runEventListeners(this.game)
+                this.blueButtonHandler = this.playerBlue.runEventListeners(this.game)
+                this.gameStartingSetting()
+
+                this.setGameLoopInterval()
+                clearInterval(this.checkStartedInterval)
+            }
+        }, 1000)
+    }
+
+    setGameLoopInterval() {
+        const interval = () => setInterval(async () => {
+            this.updateGame()
+            // this.mode = this.mode
+            // this.game = this.game
+            this.setGame()
+            await this.game.deal()
+        }, this.game.difficultySpeed)
+        this.interval = interval()
+        this.game.interval = this.interval
+    }
+
+    gameStartingSetting() {
+        this.elements['logo'].style.display = "none";
+        this.elements['gameOver'].style.display = "none";
+        this.elements['winner'].style.display = "none";
+        this.elements['redSlap'].style.display = "block";
+        this.elements['blueSlap'].style.display = "block";
+        this.elements['stopDealer'].style.display = "block";
+        this.elements['playButtons'].style.display = "none";
+        this.elements['playAgain'].style.display = "none";
+    }
+
+    setGame() {
+        console.log(this.game)
+        const gameData = {
+            started: this.game.started,
+            playerRed: this.playerRed,
+            playerBlue: this.playerBlue,
+            mode: this.mode,
+            game: this.game,
+            deck_id: this.game.deck_id
+        }
+        this.socket.emit("game", gameData)
+    }
+
+    updateGame() {
+        this.socket.on("game", game => {
+            // this.ctx = game.ctx
+            this.started = game.started
+            this.playerRed = game.playerRed
+            this.playerBlue = game.playerBlue
+            this.mode = game.mode
+            this.game = game,
+            this.game.deck_id = game.deck_id
         })
     }
 

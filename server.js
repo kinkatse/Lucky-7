@@ -14,6 +14,7 @@ const server = http.createServer(app);
 const io = socketio(server, {
   origin: "http://localhost:5000/"
 });
+// const io = socketio(5000)
 const fs = require("fs");
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -72,6 +73,13 @@ const room = [null, null];
 io.on('connection', (socket) => {
   console.log("making request")
 
+  // socket.on('game', (game) => {
+  //   console.log("game info", game)
+
+  //   // Emit the game to all other clients
+  //   socket.broadcast.emit('game', game);
+  // });
+
   // My Attempt to make rooms for each session with 
   // socket.on('join-room', (player, gameView) => {
     // if (gameView.playerRed && gameView.playerBlue) {
@@ -98,36 +106,36 @@ io.on('connection', (socket) => {
     }
     
     // // Tell the connecting client what player number they are
-    // socket.emit('player-number', playerIndex);
+    socket.emit('player-number', playerIndex);
     if (playerIndex === -1) return; // Future error handling if someone else tries to join
     room[playerIndex] = socket;
     
-    // console.log("player joined with index", playerIndex)
+    console.log("player joined with index", playerIndex)
     let color = playerIndex === 0 ? "red" : "blue"
-    // console.log("player color", color)
+    console.log("player color", color)
     socket.broadcast.emit('connect-player', color);
+
+    socket.on('game', (game) => {
+      console.log("game info", game)
+  
+      // Emit the game to all other clients
+      socket.broadcast.emit('game', game);
+    });
   // });
 
-  socket.on('slap', (data) => {
-    const { color, topDeck, scoreValue } = data;
+  // socket.on('slap', (data) => {
+  //   const { color, topDeck, scoreValue } = data;
     
-    const slap = {
-      color,
-      topDeck,
-      scoreValue
-    };
-    // console.log("slap info", slap)
+  //   const slap = {
+  //     color,
+  //     topDeck,
+  //     scoreValue
+  //   };
+  //   // console.log("slap info", slap)
 
-    // Emit the slap to all other clients
-    socket.broadcast.emit('slap', slap);
-  });
-
-  socket.on('game', (game) => {
-    console.log("game info", game)
-
-    // Emit the game to all other clients
-    socket.broadcast.emit('game', game);
-  });
+  //   // Emit the slap to all other clients
+  //   socket.broadcast.emit('slap', slap);
+  // });
 
   socket.on('disconnect', () => {
     // console.log(`Player ${playerIndex} Disconnected`);

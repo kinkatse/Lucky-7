@@ -1,13 +1,15 @@
 import AudioUtil from "./audioUtil"
 
 class Game {
-    constructor(ctx, playerRed, playerBlue, socket, elements) {
+    constructor(ctx, playerRed, playerBlue, socket, elements, view) {
         this.ctx = ctx
         this.difficultySpeed = 1000 // 1500 slow speed // 1000 medium speed // 500 fast speed
         this.playerRed = playerRed
         this.playerBlue = playerBlue
-        this.socket = socket
+        // this.socket = socket
         this.elements = elements
+        // this.view = view
+        this.started = false
 
         this.redSlapEl = this.elements['redSlap']
         this.blueSlapEl = this.elements['blueSlap']
@@ -58,9 +60,11 @@ class Game {
     }
 
     async startGame(mode) {
+        this.started = true
         this.resetToDefault(mode)
         
         await this.shuffleDecks()
+        debugger
         
         this.redSlapEl.style.display = "block"
         this.blueSlapEl.style.display = "block"
@@ -69,8 +73,33 @@ class Game {
         this.redButtonHandler = this.playerRed.runEventListeners(this)
         this.blueButtonHandler = this.playerBlue.runEventListeners(this)
 
-        // this.socket.emit("game", this)
-        this.dealerLoop()
+        // this.socket.emit("game", {game: 'hi'})
+        // this.view.updateGame()
+        // this.view.setGame()
+
+        // const gameData = {
+        //     playerRed: this.playerRed,
+        //     playerBlue: this.playerBlue,
+        //     mode: "easy",
+        //     // obj: {"hi": "hi"}
+        //     game: this
+
+        //     // this.difficultySpeed = 1000 // 1500 slow speed // 1000 medium speed // 500 fast speed
+        //     // this.playerRed = playerRed
+        //     // this.playerBlue = playerBlue
+        //     // this.socket = socket
+        //     // this.elements = elements
+        //     // this.view = view
+        //     // this.started = false
+        //     // this.deck_id
+        //     // this.drawnCard = null
+        //     // this.discard = []
+        //     // this.topDeck = []
+        // }
+        // console.log(this.playerRed)
+        // this.socket.emit("game", gameData)
+
+        // this.dealerLoop()
     }
 
     async shuffleDecks() {
@@ -83,12 +112,14 @@ class Game {
         this.deck_id = deck.deck_id
     }
 
-    dealerLoop() {
-        // this.update()
-        this.interval = setInterval(async () => {
+    // dealerLoop(updateFn) {
+    async deal() {
+        // this.interval = setInterval(async () => {
+            // updateFn()
+            // this.view.updateGame()
             // Updating the score
-            this.playerRed.setScore()
-            this.playerBlue.setScore()
+            // this.playerRed.setScore()
+            // this.playerBlue.setScore()
             
             await this.drawCard()
             // Updating our array of cards to keep track of for point value
@@ -96,8 +127,8 @@ class Game {
             if (this.topDeck.length > 3) this.topDeck.pop()
             this.placeCard()
             this.checkGameOver()
-            // this.update()
-        }, this.difficultySpeed)
+            // this.view.setGame()
+        // }, this.difficultySpeed)
 
         this.elements['stopDealer'].addEventListener("click", (e) => {
             AudioUtil.playClickButton()
@@ -106,13 +137,32 @@ class Game {
         })
     }
 
-    update() {
-        // this.playerRed.setGame(this)
-        if (this.playerBlue.game) {
-            // this would be where we update the other user's interface
-        }
-        this.playerBlue.setGame(this)
-    }
+    // update() {
+    //     // this.playerRed.setGame(this)
+    //     if (this.playerBlue.game) {
+    //         // this would be where we update the other user's interface
+    //     }
+    //     this.playerBlue.setGame(this)
+    // }
+
+    // setGame() {
+    //     this.socket.on("game", game => {
+    //         this.view.ctx = game.ctx
+    //         this.view.playerRed = game.playerRed
+    //         this.view.playerBlue = game.playerBlue
+    //         this.view.mode = game.view.mode
+    //         this.view.game = game
+    //     })
+    // }
+
+    // setScore() {
+    //     this.socket.on("slap", data => {
+    //         if (data.color === this.color) {
+    //             this.score = data.scoreValue
+    //             this.scoreTextEl.innerText = `${this.scoreNewText} SCORE: ${data.scoreValue}`
+    //         }
+    //     })
+    // }
 
     checkGameOver() {
         if (this.playerRed.score > 10 || this.playerBlue.score > 10 || this.remaining === 0) {

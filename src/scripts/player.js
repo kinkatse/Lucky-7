@@ -1,7 +1,7 @@
 class Player {
     constructor(color, socket, ctx) {
         this.color = color
-        this.socket = socket
+        this.socket
         this.ctx = ctx
         this.score = 0
         this.scoreNewText = this.color === "red" ? "RED" : "BLUE"
@@ -13,19 +13,19 @@ class Player {
         this.scoreTextEl.innerText = `${this.scoreNewText} SCORE: 0`
     }
 
-    setGame(game) {
-        if (!this.game) this.game = game
-        this.socket.on("game", game => this.game = game)
-    }
+    // setGame(game) {
+    //     if (!this.game) this.game = game
+    //     this.socket.on("game", game => this.game = game)
+    // }
 
-    setScore() {
-        this.socket.on("slap", data => {
-            if (data.color === this.color) {
-                this.score = data.scoreValue
-                this.scoreTextEl.innerText = `${this.scoreNewText} SCORE: ${data.scoreValue}`
-            }
-        })
-    }
+    // setScore() {
+    //     this.socket.on("slap", data => {
+    //         if (data.color === this.color) {
+    //             this.score = data.scoreValue
+    //             this.scoreTextEl.innerText = `${this.scoreNewText} SCORE: ${data.scoreValue}`
+    //         }
+    //     })
+    // }
 
     // joinRoom(gameView) {
     //     debugger
@@ -60,7 +60,18 @@ class Player {
                 topDeck: game.topDeck,
                 scoreValue: this.score
             }
-            this.socket.emit("slap", data)
+            // this.socket.emit("slap", data)
+
+
+            // const gameData = {
+            //     ctx: this.ctx,
+            //     playerRed: this.playerRed,
+            //     playerBlue: this.playerBlue,
+            //     mode: this.mode,
+            //     game: this
+            // }
+            // // debugger
+            // this.socket.emit("game", gameData)
 
             game.checkGameOver()
         }
