@@ -66,10 +66,12 @@ class Game {
         this.blueSlapEl.style.display = "block"
 
         // Save reference to eventHander for removing it later
-        this.redButtonHandler = this.playerRed.runEventListeners(this)
-        this.blueButtonHandler = this.playerBlue.runEventListeners(this)
+        this.redButtonHandler = this.playerRed.runEventListeners(this, this.socket)
+        this.blueButtonHandler = this.playerBlue.runEventListeners(this, this.socket)
 
         // this.socket.emit("game", this)
+        this.playerRed.setScore(this.socket)
+        this.playerBlue.setScore(this.socket)
         this.dealerLoop()
     }
 
@@ -87,8 +89,6 @@ class Game {
         // this.update()
         this.interval = setInterval(async () => {
             // Updating the score
-            this.playerRed.setScore()
-            this.playerBlue.setScore()
             
             await this.drawCard()
             // Updating our array of cards to keep track of for point value

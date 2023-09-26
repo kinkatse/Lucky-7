@@ -23,9 +23,32 @@ class GameView {
             'joinRoom': document.querySelector('.join-room')
         }
 
+        // this.connectPlayers()
         this.playersJoined()
         // this.addJoinRoomEventListener()
         // this.testSocket()
+    }
+
+    connectPlayers() {
+        // debugger
+        this.connectPlayersInterval = setInterval(() => {
+            debugger
+            if (this.player) {
+                // debugger
+                clearInterval(this.connectPlayersInterval)
+                console.log("Cleared interval")
+                return
+            }
+        }, 1000)
+        this.socket.on("connect-player", color => {
+            // debugger
+            console.log("Connecting player")
+            if (color === "red") {
+                this.player = new Player("red")
+            } else {
+                this.player = new Player("blue")
+            }
+        })
     }
 
     // testSocket() {

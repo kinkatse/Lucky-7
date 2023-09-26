@@ -74,18 +74,18 @@ io.on('connection', (socket) => {
 
   // My Attempt to make rooms for each session with 
   // socket.on('join-room', (player, gameView) => {
-    // if (gameView.playerRed && gameView.playerBlue) {
-      // console.log("Already two players connected")
-    //   return;
-    // } else if (gameView.playerBlue) {
-    //   player.color = "red"
-    //   gameView.playerRed = player
-    // } else {
-    //   player.color = "blue"
-    //   gameView.playerBlue = player
-    // }
-    // console.log(player.color, "player joined")
-    // socket.broadcast.emit('connect-player', player);
+  //   if (gameView.playerRed && gameView.playerBlue) {
+  //     console.log("Already two players connected")
+  //     return;
+  //   } else if (gameView.playerBlue) {
+  //     player.color = "red"
+  //     gameView.playerRed = player
+  //   } else {
+  //     player.color = "blue"
+  //     gameView.playerBlue = player
+  //   }
+  //   console.log(player.color, "player joined")
+  //   socket.broadcast.emit('connect-player', player);
   // })
     
     // Emit the slap to all other clients
@@ -102,9 +102,9 @@ io.on('connection', (socket) => {
     if (playerIndex === -1) return; // Future error handling if someone else tries to join
     room[playerIndex] = socket;
     
-    // console.log("player joined with index", playerIndex)
+    console.log("player joined with index", playerIndex)
     let color = playerIndex === 0 ? "red" : "blue"
-    // console.log("player color", color)
+    console.log("player color", color)
     socket.broadcast.emit('connect-player', color);
   // });
 

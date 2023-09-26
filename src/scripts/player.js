@@ -1,7 +1,7 @@
 class Player {
     constructor(color, socket, ctx) {
         this.color = color
-        this.socket = socket
+        // this.socket = socket
         this.ctx = ctx
         this.score = 0
         this.scoreNewText = this.color === "red" ? "RED" : "BLUE"
@@ -13,13 +13,13 @@ class Player {
         this.scoreTextEl.innerText = `${this.scoreNewText} SCORE: 0`
     }
 
-    setGame(game) {
+    setGame(game, socket) {
         if (!this.game) this.game = game
-        this.socket.on("game", game => this.game = game)
+        socket.on("game", game => this.game = game)
     }
 
-    setScore() {
-        this.socket.on("slap", data => {
+    setScore(socket) {
+        socket.on("slap", data => {
             if (data.color === this.color) {
                 this.score = data.scoreValue
                 this.scoreTextEl.innerText = `${this.scoreNewText} SCORE: ${data.scoreValue}`
@@ -39,7 +39,7 @@ class Player {
 
     // BUG TO FIX LATER: Can click rapidly on combos of cards that hold
     // value to cheat and gain more points than youre supposed to
-    runEventListeners(game) {
+    runEventListeners(game, socket) {
         const slap = document.querySelector(`.${this.color}-button`)
         const buttonHandler = (e) => {
             let scoreValue = null
@@ -60,7 +60,7 @@ class Player {
                 topDeck: game.topDeck,
                 scoreValue: this.score
             }
-            this.socket.emit("slap", data)
+            socket.emit("slap", data)
 
             game.checkGameOver()
         }
