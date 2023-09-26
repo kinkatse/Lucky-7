@@ -261,7 +261,7 @@ class Game {
             return value
         }
         AudioUtil.playPlayerMisclicks()
-        return -10
+        return -2
     }
 
     slap7() {

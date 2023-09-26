@@ -1,16 +1,19 @@
 class Player {
     constructor(color, socket, ctx) {
         this.color = color
+        this.oppColor = this.color === "red" ? "blue" : "red"
         // this.socket = socket
         // this.ctx = ctx
         this.score = 0
-        this.scoreNewText = this.color === "red" ? "RED" : "BLUE"
+        this.scoreNewText = this.color === "red" ? "Red" : "Blue"
         this.scoreTextEl = document.getElementById(`${this.color}-score`)
+        this.scoreOtherText = this.color === "red" ? "Blue" : "Red"
+        this.scoreOtherTextEl = document.getElementById(`${this.oppColor}-score`)
     }
 
     resetPlayer() {
         this.score = 0
-        this.scoreTextEl.innerText = `${this.scoreNewText} SCORE: 0`
+        this.scoreTextEl.innerText = `${this.scoreNewText} Score: 0`
     }
 
     setGame(game, socket) {
@@ -26,16 +29,30 @@ class Player {
         //     }
         // })
 
-        socket.on("slap", data => {
-            if (data.color === this.color) {
-                this.score = data.scoreValue
-                this.scoreTextEl.innerText = `${this.scoreNewText} SCORE: ${data.scoreValue}`
-                if (this.color === "red") {
-                    game.score["red"] = this.score
-                } else {
-                    game.score["blue"] = this.score
-                }
+        // this.color = blue
+        socket.on("slap", data => { // red data
+            // debugger
+            if (data.color === "red") {
+                game.score["red"] = data.scoreValue
+                debugger
+            } else {
+                game.score["blue"] = data.scoreValue
+                debugger
             }
+
+            // if (data.color === this.color) {
+                // this.scoreTextEl.innerText = `${this.scoreNewText} Score: ${data.scoreValue}`
+            // } else {
+            this.scoreTextEl.innerText = `${this.scoreNewText} Score: ${game.score[this.color]}`
+            this.scoreOtherTextEl.innerText = `${this.scoreOtherText} Score: ${game.score[this.oppColor]}`
+            // }
+            // if (data.color === "red") {
+            //     game.score["red"] = data.scoreValue
+            //     debugger
+            // } else {
+            //     game.score["blue"] = data.scoreValue
+            //     debugger
+            // }
         })
     }
 
@@ -59,10 +76,10 @@ class Player {
             let scoreNewText = null
             if (this.color === "red") {
                 scoreValue = parseInt(this.scoreTextEl.innerText.slice(11))
-                scoreNewText = "RED"
+                scoreNewText = "Red"
             } else {
                 scoreValue = parseInt(this.scoreTextEl.innerText.slice(12))
-                scoreNewText = "BLUE"
+                scoreNewText = "Blue"
             }
             let newValue = scoreValue + game.slapValue()
             this.score = newValue
@@ -71,7 +88,7 @@ class Player {
             } else {
                 game.score["blue"] = this.score
             }
-            this.scoreTextEl.innerText = `${scoreNewText} SCORE: ${newValue}`
+            this.scoreTextEl.innerText = `${scoreNewText} Score: ${newValue}`
 
             const data = {
                 color: this.color,
