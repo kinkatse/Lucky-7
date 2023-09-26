@@ -8,17 +8,14 @@ class GameView {
         // this.video = video
         this.ctx = ctx
         this.socket = io.connect(window.location.origin);
-        // this.playerRed = new Player("red", this.socket, ctx)
-        // this.playerBlue = new Player("blue", this.socket, ctx)
         this.mode = "easy"
         this.elements = {
             'gameOver': document.querySelector('.gameover'),
             'winner': document.querySelector('.winner'),
             'slap': document.querySelector('.slap'),
-            // 'redSlap': document.querySelector('.red-button'),
-            // 'blueSlap': document.querySelector('.blue-button'),
             'stopDealer': document.getElementById('stop-dealer'),
             'playButtons': document.querySelector('.play-buttons'),
+            'waiting': document.querySelector('.waiting'),
             'playAgain': document.querySelector('.play-again'),
             'logo': document.querySelector('.logo'),
             'joinRoom': document.querySelector('.join-room')
@@ -33,7 +30,8 @@ class GameView {
     connectPlayers() {
         // First player connected, then second player connected
         this.socket.on("connect-player", color => {
-            // debugger
+            this.elements['playButtons'].style.display = "flex"
+            this.elements['waiting'].style.display = "none"
             console.log("Connecting player")
             if (color === "red") {
                 this.player = new Player("red")
@@ -49,6 +47,8 @@ class GameView {
             const { color, mode } = data
             console.log("Connecting other player")
             console.log(`Other player is ${color}`)
+            this.elements['waiting'].style.display = "none"
+
             if (color === "red") {
                 this.player = new Player("red")
             } else {

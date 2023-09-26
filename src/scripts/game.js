@@ -12,6 +12,7 @@ class Game {
         this.elements = elements
         this.discard = []
         this.topDeck = []
+        this.beforeDeck = []
 
         // this.redSlapEl = this.elements['redSlap']
         // this.blueSlapEl = this.elements['blueSlap']
@@ -74,6 +75,7 @@ class Game {
         this.buttonHandler = this.player.runEventListeners(this, this.socket)
 
         this.player.setScore(this.socket, this)
+        this.drawTempCard()
         this.dealerLoop()
     }
 
@@ -167,6 +169,22 @@ class Game {
         this.elements['playButtons'].style.display = "flex";
     }
 
+    async drawTempCard() {
+        const res = await fetch(`https://deckofcardsapi.com/api/deck/${this.deck_id}/draw/?count=1`,
+            {
+                "Content-Type": "application/json"
+            }
+        )
+        const cardResponse = await res.json()
+        this.beforeDeck.unshift(cardResponse.cards[0])
+        
+        const cardData = {
+            card: cardResponse.cards[0],
+            remaining: cardResponse.remaining
+        }
+        this.socket.emit("draw-new", cardData)
+    }
+
     async drawCard() {
         const res = await fetch(`https://deckofcardsapi.com/api/deck/${this.deck_id}/draw/?count=1`,
             {
@@ -175,15 +193,17 @@ class Game {
         )
         const cardResponse = await res.json()
 
+        this.beforeDeck.unshift(cardResponse.cards[0])
+
+        this.drawnCard = this.beforeDeck.pop()
+        this.remaining = cardResponse.remaining + 1
+        AudioUtil.playDealCard()
+
         const cardData = {
-            card: this.drawnCard,
-            remaining: this.remaining
+            card: cardResponse.cards[0],
+            remaining: cardResponse.remaining
         }
         this.socket.emit("draw-new", cardData)
-
-        this.drawnCard = cardResponse.cards[0]
-        this.remaining = cardResponse.remaining
-        AudioUtil.playDealCard()
     }
 
     placeCard() {

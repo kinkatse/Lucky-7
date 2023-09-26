@@ -166,6 +166,10 @@ button:hover {
   -webkit-text-fill-color: transparent;
 }
 
+.waiting {
+  font-size: 20px;
+}
+
 @keyframes rotate-translate-a {
   from {
     transform: scale(1.3) rotate(10deg) translateX(30px) translateY(0px);
