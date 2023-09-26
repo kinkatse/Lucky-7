@@ -33,7 +33,7 @@ class GameView {
     connectPlayers() {
         // First player connected, then second player connected
         this.socket.on("connect-player", color => {
-            debugger
+            // debugger
             console.log("Connecting player")
             if (color === "red") {
                 this.player = new Player("red")
@@ -56,18 +56,18 @@ class GameView {
             }
             this.mode = mode
             this.game = new Game(this.player, this.elements, this.socket)
-            AudioUtil.playStartGame()
             this.game.connectGame(this.mode)
+            AudioUtil.playStartGame()
             this.startGameSetting()
         })
-    }
 
-    // testSocket() {
-    //     const title = document.getElementsByClassName("title")[0]
-    //     title.addEventListener("click", (e) => {
-    //         this.socket.emit("chat", "Hello")
-    //     })
-    // }
+        this.socket.on("draw-new", cardData => {
+            console.log("Received a new card")
+            // this.game.deck_id = cardData.deck_id
+            this.game.drawnCard = cardData.card
+            this.game.remaining = cardData.remaining
+        })
+    }
 
     // addJoinRoomEventListener() {
     //     this.elements['playButtons'].style.display = "none"
@@ -92,9 +92,6 @@ class GameView {
             this.mode = e.target.getAttribute("mode")
             this.game = new Game(this.player, this.elements, this.socket)
             // this.game = new Game(this.ctx, this.playerRed, this.playerBlue, this.socket, this.elements)
-            AudioUtil.playStartGame()
-            this.game.startGame(this.mode)
-            this.startGameSetting()
             
             const startGameData = {
                 color: this.player.color,
@@ -103,16 +100,17 @@ class GameView {
 
             console.log(`This player is ${this.player.color}`)
             this.socket.emit("start-game", startGameData)
+            AudioUtil.playStartGame()
+            this.game.startGame(this.mode)
+            this.startGameSetting()
         })
     }
 
     startGameSetting() {
-        this.elements['logo'].style.display = "none";
-        this.elements['gameOver'].style.display = "none";
-        this.elements['winner'].style.display = "none";
-        this.elements['slap'].style.display = "block";
-        // this.elements['redSlap'].style.display = "block"
-        // this.elements['blueSlap'].style.display = "block"
+        this.elements['logo'].style.display = "none"
+        this.elements['gameOver'].style.display = "none"
+        this.elements['winner'].style.display = "none"
+        this.elements['slap'].style.display = "block"
         this.elements['stopDealer'].style.display = "block"
         this.elements['playButtons'].style.display = "none"
         this.elements['playAgain'].style.display = "none"

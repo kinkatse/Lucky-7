@@ -31,28 +31,14 @@ class Player {
 
         // this.color = blue
         socket.on("slap", data => { // red data
-            // debugger
             if (data.color === "red") {
                 game.score["red"] = data.scoreValue
-                debugger
             } else {
                 game.score["blue"] = data.scoreValue
-                debugger
             }
 
-            // if (data.color === this.color) {
-                // this.scoreTextEl.innerText = `${this.scoreNewText} Score: ${data.scoreValue}`
-            // } else {
             this.scoreTextEl.innerText = `${this.scoreNewText} Score: ${game.score[this.color]}`
             this.scoreOtherTextEl.innerText = `${this.scoreOtherText} Score: ${game.score[this.oppColor]}`
-            // }
-            // if (data.color === "red") {
-            //     game.score["red"] = data.scoreValue
-            //     debugger
-            // } else {
-            //     game.score["blue"] = data.scoreValue
-            //     debugger
-            // }
         })
     }
 

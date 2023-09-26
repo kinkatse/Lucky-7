@@ -10,6 +10,8 @@ class Game {
         this.score = { red: 0, blue: 0 }
         this.socket = socket
         this.elements = elements
+        this.discard = []
+        this.topDeck = []
 
         // this.redSlapEl = this.elements['redSlap']
         // this.blueSlapEl = this.elements['blueSlap']
@@ -67,31 +69,22 @@ class Game {
         await this.shuffleDecks()
         
         this.slapEl.style.display = "block"
-        // this.redSlapEl.style.display = "block"
-        // this.blueSlapEl.style.display = "block"
 
         // Save reference to eventHander for removing it later
-        // this.redButtonHandler = this.playerRed.runEventListeners(this, this.socket)
-        // this.blueButtonHandler = this.playerBlue.runEventListeners(this, this.socket)
         this.buttonHandler = this.player.runEventListeners(this, this.socket)
 
-        // this.socket.emit("game", this)
         this.player.setScore(this.socket, this)
-        // this.playerRed.setScore(this.socket)
-        // this.playerBlue.setScore(this.socket)
         this.dealerLoop()
     }
 
     async connectGame(mode) {
         this.resetToDefault(mode)
         
-        await this.shuffleDecks()
-        
         this.slapEl.style.display = "block"
         this.buttonHandler = this.player.runEventListeners(this, this.socket)
 
         this.player.setScore(this.socket, this)
-        this.dealerLoop()
+        this.updateCardLoop()
     }
 
     async shuffleDecks() {
@@ -105,7 +98,6 @@ class Game {
     }
 
     dealerLoop() {
-        // this.update()
         this.interval = setInterval(async () => {
             await this.drawCard()
             // Updating our array of cards to keep track of for point value
@@ -113,7 +105,6 @@ class Game {
             if (this.topDeck.length > 3) this.topDeck.pop()
             this.placeCard()
             this.checkGameOver()
-            // this.update()
         }, this.difficultySpeed)
 
         this.elements['stopDealer'].addEventListener("click", (e) => {
@@ -123,18 +114,25 @@ class Game {
         })
     }
 
-    // update() {
-    //     // this.playerRed.setGame(this)
-    //     if (this.playerBlue.game) {
-    //         // this would be where we update the other user's interface
-    //     }
-    //     this.playerBlue.setGame(this)
-    // }
+    updateCardLoop() {
+        this.interval = setInterval(async () => {
+            if (!this.drawnCard) return
+            AudioUtil.playDealCard()
+            // Updating our array of cards to keep track of for point value
+            this.topDeck.unshift(this.drawnCard)
+            if (this.topDeck.length > 3) this.topDeck.pop()
+            this.placeCard()
+            this.checkGameOver()
+        }, this.difficultySpeed)
+
+        this.elements['stopDealer'].addEventListener("click", (e) => {
+            AudioUtil.playClickButton()
+            this.remaining = 0
+            this.checkGameOver()
+        })
+    }
 
     checkGameOver() {
-        // if (this.playerRed.score > 10 || this.playerBlue.score > 10 || this.remaining === 0) {
-        //     this.gameOver()
-        // }
         if (this.score["red"] > 10 || this.score["blue"] > 10 || this.remaining === 0) {
             this.gameOver()
         }
@@ -148,24 +146,9 @@ class Game {
         const stopDealer = this.elements['stopDealer']
         this.slapEl.removeEventListener("click", this.buttonHandler)
         this.slapEl.style.display = "none"
-        // this.redSlapEl.removeEventListener("click", this.redButtonHandler)
-        // this.blueSlapEl.removeEventListener("click", this.blueButtonHandler)
-        // this.redSlapEl.style.display = "none"
-        // this.blueSlapEl.style.display = "none"
         stopDealer.style.display = "none"
 
         const winner = this.elements['winner']
-        
-        // if (this.playerRed.score > this.playerBlue.score) {
-        //     winner.innerText = "Red Player Wins!"
-        //     winner.style.color = "#FF2727";
-        // } else if (this.playerRed.score < this.playerBlue.score) {
-        //     winner.innerText = "Blue Player Wins!"
-        //     winner.style.color = "#4A77FF";
-        // } else {
-        //     winner.innerText = "It's a Tie!"
-        //     winner.style.color = "black";
-        // }
 
         if (this.score["red"] > this.score["blue"]) {
             winner.innerText = "Red Player Wins!"
@@ -191,9 +174,16 @@ class Game {
             }
         )
         const cardResponse = await res.json()
-        AudioUtil.playDealCard()
+
+        const cardData = {
+            card: this.drawnCard,
+            remaining: this.remaining
+        }
+        this.socket.emit("draw-new", cardData)
+
         this.drawnCard = cardResponse.cards[0]
         this.remaining = cardResponse.remaining
+        AudioUtil.playDealCard()
     }
 
     placeCard() {

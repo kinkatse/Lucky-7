@@ -70,7 +70,7 @@ app.get("/", (request, response) => {
 
 const room = [null, null];
 io.on('connection', (socket) => {
-  console.log("making request")
+  // console.log("making request")
 
   // My Attempt to make rooms for each session with 
   // socket.on('join-room', (player, gameView) => {
@@ -112,11 +112,11 @@ io.on('connection', (socket) => {
     console.log(gameData)
     // Emit the start-game clients
     if (gameData.color === "red") {
-      console.log("Sending other player they are blue")
+      // console.log("Sending other player they are blue")
       gameData.color = "blue"
       socket.broadcast.emit('connect-game', gameData);
     } else {
-      console.log("Sending other player they are red")
+      // console.log("Sending other player they are red")
       gameData.color = "red"
       socket.broadcast.emit('connect-game', gameData);
     }
@@ -133,6 +133,13 @@ io.on('connection', (socket) => {
 
     // Emit the slap to all other clients
     socket.broadcast.emit('slap', slap);
+  });
+
+  socket.on('draw-new', (cardData) => {
+    console.log("draw info", cardData)
+
+    // Emit the draw-new to all other clients
+    socket.broadcast.emit('draw-new', cardData);
   });
 
   socket.on('game', (game) => {
