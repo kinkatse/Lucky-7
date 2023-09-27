@@ -22,19 +22,14 @@ This is a card game that is similar to SlapJack. Whichever player slaps the stac
     - `npm run watch`
     - `npm run start`
 - Open up http://localhost:8080/ on two browsers
-- Press the same play button on both
+- Press the same play button on the host (The one with the play buttons)
+    - Other client will say "Waiting for host..."
 
 ### Bugs/Comments:
 - There is no database needed for this project but it can be useful in some cases I discuss below (in Future Implementations)
 - I have worked a lot on game logic and fine tuning that but ran into trouble with sockets that led some buttons to not function as they should:
-    - Stop Dealer button should stop the game for both players
-    - Starting a game should start the game for both players
-        - (Actually was attempting to create a room for both players to join but lost a lot of time in that)
-    - Currently the decks of cards are not the same deck of cards.
-    - Both the above issues stem from clicking the start button which initiates a new game instance, and thus creates its own deck
-        - Fixing that would likely require a lot more time to refactor code
+    - Attempted to create a room for both players to join
     - There is not a way for 2 players to play without using the same mouse
-    - For now, you can slap using the other color's button
     - For now, you can click the slap button multiple times during a combo to 'cheat' more points until the next card appears
 
 ### Game Conditions:
@@ -89,4 +84,3 @@ This is a card game that is similar to SlapJack. Whichever player slaps the stac
 
 ## Closing Thoughts:
 - Thank you for giving me this opportunity to challenge myself. This was very stressful and made me grow more even if I didn't accomplish a finished product in time. I am excited to continue working on this and show more progress throughout the week! Keep in tuned!
-- NOTE: If I do make edits, I will make a branch so the main branch will be what should be assessed. Any changes and commits will be on that new branch and made available (with instructions to get to it) on the end of this ReadME.
