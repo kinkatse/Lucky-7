@@ -75,7 +75,7 @@ class Game {
         // Save reference to eventHandler for removing it later
         this.buttonHandler = this.player.runEventListeners(this, this.socket)
 
-        this.player.setScore(this.socket, this)
+        this.player.listenScore(this.socket, this)
         if (this.client === "host") this.drawCard()
         this.dealerLoop()
     }
@@ -123,7 +123,7 @@ class Game {
         const cardResponse = await res.json()
         this.beforeDeck.unshift(cardResponse.cards[0])
 
-        // This is only if the beforeDeck has a card
+        // This is only if the beforeDeck has cards to pop off
         if (this.beforeDeck.length > 1) {
             this.drawnCard = this.beforeDeck.pop()
             this.remaining = cardResponse.remaining + 1

@@ -15,7 +15,7 @@ class Player {
         this.scoreOtherTextEl.innerText = `${this.scoreOtherText} Score: 0`
     }
 
-    setScore(socket, game) {
+    listenScore(socket, game) {
         socket.on("slap", data => {
             if (data.color === "red") {
                 game.score["red"] = data.scoreValue
