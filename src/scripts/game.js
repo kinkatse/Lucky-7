@@ -99,7 +99,7 @@ class Game {
             }
             // Updating our array of cards to keep track of for point value
             this.topDeck.unshift(this.drawnCard)
-            if (this.topDeck.length > 5) this.topDeck.pop()
+            if (this.topDeck.length > 6) this.topDeck.pop()
             this.placeCard()
             this.checkGameOver()
         }, this.difficultySpeed)
@@ -159,7 +159,8 @@ class Game {
         this.prevOneEl.children[0].classList.add("second")
         this.topEl.children[0].classList.add("top")
 
-
+        if (this.topDeck[5])
+            this.prevFiveEl.children[0].src = this.topDeck[5].image
         if (this.topDeck[4])
             this.prevFourEl.children[0].src = this.topDeck[4].image
         if (this.topDeck[3])
