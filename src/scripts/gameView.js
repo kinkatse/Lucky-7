@@ -25,7 +25,7 @@ class GameView {
 
     connectPlayers() {
         // Only for the first player
-        // First player connected, then second player connected
+        // First player connected, then second player connected, which is why this emitted back to first player
         this.socket.on("connect-player", color => {
             console.log("Connecting player")
             console.log(`This player is ${color}`)
