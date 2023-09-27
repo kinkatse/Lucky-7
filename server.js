@@ -127,7 +127,6 @@ io.on('connection', (socket) => {
     
     const slap = {
       color,
-      topDeck,
       scoreValue
     };
 
@@ -147,12 +146,6 @@ io.on('connection', (socket) => {
     socket.broadcast.emit('force-gameover', boolean);
   });
 
-  // socket.on('game', (game) => {
-  //   console.log("game info", game)
-
-  //   // Emit the game to all other clients
-  //   socket.broadcast.emit('game', game);
-  // });
 
   socket.on('disconnect', () => {
     // console.log(`Player ${playerIndex} Disconnected`);

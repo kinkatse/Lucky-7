@@ -12,11 +12,7 @@ class Player {
     resetPlayer() {
         this.score = 0
         this.scoreTextEl.innerText = `${this.scoreNewText} Score: 0`
-    }
-
-    setGame(game, socket) {
-        if (!this.game) this.game = game
-        socket.on("game", game => this.game = game)
+        this.scoreOtherTextEl.innerText = `${this.scoreOtherText} Score: 0`
     }
 
     setScore(socket, game) {
@@ -59,16 +55,14 @@ class Player {
             }
             let newValue = scoreValue + game.slapValue()
             this.score = newValue
-            if (this.color === "red") {
-                game.score["red"] = this.score
-            } else {
-                game.score["blue"] = this.score
-            }
+
+            if (this.color === "red") { game.score["red"] = this.score }
+            else { game.score["blue"] = this.score }
+
             this.scoreTextEl.innerText = `${scoreNewText} Score: ${newValue}`
 
             const data = {
                 color: this.color,
-                topDeck: game.topDeck,
                 scoreValue: this.score
             }
             socket.emit("slap", data)

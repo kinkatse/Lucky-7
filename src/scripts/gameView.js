@@ -24,9 +24,11 @@ class GameView {
     }
 
     connectPlayers() {
+        // Only for the first player
         // First player connected, then second player connected
         this.socket.on("connect-player", color => {
             console.log("Connecting player")
+            console.log(`This player is ${color}`)
             this.elements['playButtons'].style.display = "flex"
             this.elements['waiting'].style.display = "none"
             if (color === "red") {
@@ -37,6 +39,7 @@ class GameView {
             this.playersJoined()
         })
 
+        // Only for the second player
         // After game starts, the 2nd player receives this so it can create player instance
         this.socket.on("connect-game", data => {
             const { color, mode } = data
@@ -51,8 +54,7 @@ class GameView {
             }
             this.mode = mode
             this.game = new Game(this.player, this.elements, this.socket)
-            this.game.connectGame(this.mode)
-            AudioUtil.playStartGame()
+            this.game.client = "entrant"
             this.startGameSetting()
         })
 
@@ -81,6 +83,7 @@ class GameView {
     //     })
     // }
 
+    // Only after both players are 'connected', first player runs this function
     playersJoined() {
         this.elements['playButtons'].addEventListener("click", (e) => {
             this.mode = e.target.getAttribute("mode")
@@ -92,15 +95,16 @@ class GameView {
                 mode: this.mode
             }
 
-            console.log(`This player is ${this.player.color}`)
             this.socket.emit("start-game", startGameData)
-            AudioUtil.playStartGame()
-            this.game.startGame(this.mode)
+            this.game.client = "host"
             this.startGameSetting()
         })
     }
 
     startGameSetting() {
+        this.game.startGame(this.mode)
+        AudioUtil.playStartGame()
+        
         this.elements['logo'].style.display = "none"
         this.elements['gameOver'].style.display = "none"
         this.elements['winner'].style.display = "none"

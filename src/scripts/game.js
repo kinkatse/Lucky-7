@@ -33,7 +33,6 @@ class Game {
         this.discard = []
         this.topDeck = []
         this.beforeDeck = []
-        this.client = ""
         this.player.resetPlayer()
         
         this.prevFiveEl.dataset.card = null
@@ -68,9 +67,8 @@ class Game {
 
     async startGame(mode) {
         this.resetToDefault(mode)
-        this.client = "host"
         
-        await this.shuffleDecks()
+        if (this.client === "host") await this.shuffleDecks()
         
         this.slapEl.style.display = "block"
 
@@ -78,26 +76,8 @@ class Game {
         this.buttonHandler = this.player.runEventListeners(this, this.socket)
 
         this.player.setScore(this.socket, this)
-        this.drawTempCard()
+        if (this.client === "host") this.drawCard()
         this.dealerLoop()
-    }
-
-    async connectGame(mode) {
-        this.resetToDefault(mode)
-        this.client = "entrant"
-        
-        this.slapEl.style.display = "block"
-        this.buttonHandler = this.player.runEventListeners(this, this.socket)
-
-        // this.socket.on("force-gameover", (endGame) => {
-        //     if (endGame) {
-        //         this.remaining = 0
-        //         this.checkGameOver()
-        //     }
-        // })
-
-        this.player.setScore(this.socket, this)
-        this.updateCardLoop()
     }
 
     async shuffleDecks() {
@@ -112,7 +92,11 @@ class Game {
 
     dealerLoop() {
         this.interval = setInterval(async () => {
-            await this.drawCard()
+            if (this.client === "host") { await this.drawCard() }
+            else { 
+                if (!this.drawnCard) return
+                AudioUtil.playDealCard()
+            }
             // Updating our array of cards to keep track of for point value
             this.topDeck.unshift(this.drawnCard)
             if (this.topDeck.length > 3) this.topDeck.pop()
@@ -120,80 +104,14 @@ class Game {
             this.checkGameOver()
         }, this.difficultySpeed)
 
-        this.elements['stopDealer'].addEventListener("click", (e) => {
-            AudioUtil.playClickButton()
-            this.remaining = 0
-            this.checkGameOver()
-            this.socket.emit("game-over", true)
-        })
-    }
-
-    updateCardLoop() {
-        this.interval = setInterval(async () => {
-            if (!this.drawnCard) return
-            AudioUtil.playDealCard()
-            this.topDeck.unshift(this.drawnCard)
-            if (this.topDeck.length > 3) this.topDeck.pop()
-            this.placeCard()
-            this.checkGameOver()
-        }, this.difficultySpeed)
-    }
-
-    checkGameOver() {
-        if (this.score["red"] > 76 || this.score["blue"] > 76 || this.remaining === 0) {
-            this.gameOver()
-        }
-    }
-
-    gameOver() {
-        AudioUtil.playGameover()
-
-        clearInterval(this.interval)
-
-        const stopDealer = this.elements['stopDealer']
-        this.slapEl.removeEventListener("click", this.buttonHandler)
-        this.slapEl.style.display = "none"
-        stopDealer.style.display = "none"
-
-        const winner = this.elements['winner']
-
-        if (this.score["red"] > this.score["blue"]) {
-            winner.innerText = "Red Player Wins!"
-            winner.style.color = "#FF2727";
-        } else if (this.score["red"] < this.score["blue"]) {
-            winner.innerText = "Blue Player Wins!"
-            winner.style.color = "#4A77FF";
-        } else {
-            winner.innerText = "It's a Tie!"
-            winner.style.color = "black";
-        }
-
-        winner.style.display = "block";
-        console.log(this.client)
         if (this.client === "host") {
-            this.elements['gameOver'].style.display = "block";
-            this.elements['playAgain'].style.display = "block";
-            this.elements['playButtons'].style.display = "flex";
-        } else {
-            this.elements['gameOver'].style.display = "block";
-            this.elements['waiting'].style.display = "block";
+            this.elements['stopDealer'].addEventListener("click", (e) => {
+                AudioUtil.playClickButton()
+                this.remaining = 0
+                this.checkGameOver()
+                this.socket.emit("game-over", true)
+            })
         }
-    }
-
-    async drawTempCard() {
-        const res = await fetch(`https://deckofcardsapi.com/api/deck/${this.deck_id}/draw/?count=1`,
-            {
-                "Content-Type": "application/json"
-            }
-        )
-        const cardResponse = await res.json()
-        this.beforeDeck.unshift(cardResponse.cards[0])
-        
-        const cardData = {
-            card: cardResponse.cards[0],
-            remaining: cardResponse.remaining
-        }
-        this.socket.emit("draw-new", cardData)
     }
 
     async drawCard() {
@@ -203,13 +121,15 @@ class Game {
             }
         )
         const cardResponse = await res.json()
-
         this.beforeDeck.unshift(cardResponse.cards[0])
 
-        this.drawnCard = this.beforeDeck.pop()
-        this.remaining = cardResponse.remaining + 1
-        AudioUtil.playDealCard()
-
+        // This is only if the beforeDeck has a card
+        if (this.beforeDeck.length > 1) {
+            this.drawnCard = this.beforeDeck.pop()
+            this.remaining = cardResponse.remaining + 1
+            AudioUtil.playDealCard()
+        }
+        
         const cardData = {
             card: cardResponse.cards[0],
             remaining: cardResponse.remaining
@@ -263,6 +183,47 @@ class Game {
         }
         this.topEl.dataset.card = `${this.drawnCard.value} ${this.drawnCard.suit}`
         this.topEl.children[0].src = this.drawnCard.image
+    }
+
+    checkGameOver() {
+        if (this.score["red"] > 1 || this.score["blue"] > 1 || this.remaining === 0) {
+            this.gameOver()
+        }
+    }
+
+    gameOver() {
+        AudioUtil.playGameover()
+
+        clearInterval(this.interval)
+
+        const stopDealer = this.elements['stopDealer']
+        this.slapEl.removeEventListener("click", this.buttonHandler)
+        this.slapEl.style.display = "none"
+        stopDealer.style.display = "none"
+
+        const winner = this.elements['winner']
+
+        if (this.score["red"] > this.score["blue"]) {
+            winner.innerText = "Red Player Wins!"
+            winner.style.color = "#FF2727";
+        } else if (this.score["red"] < this.score["blue"]) {
+            winner.innerText = "Blue Player Wins!"
+            winner.style.color = "#4A77FF";
+        } else {
+            winner.innerText = "It's a Tie!"
+            winner.style.color = "black";
+        }
+
+        winner.style.display = "block";
+        console.log(this.client)
+        if (this.client === "host") {
+            this.elements['gameOver'].style.display = "block";
+            this.elements['playAgain'].style.display = "block";
+            this.elements['playButtons'].style.display = "flex";
+        } else {
+            this.elements['gameOver'].style.display = "block";
+            this.elements['waiting'].style.display = "block";
+        }
     }
 
     slapValue() {
