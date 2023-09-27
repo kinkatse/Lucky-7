@@ -1,9 +1,7 @@
 class Player {
-    constructor(color, socket, ctx) {
+    constructor(color) {
         this.color = color
         this.oppColor = this.color === "red" ? "blue" : "red"
-        // this.socket = socket
-        // this.ctx = ctx
         this.score = 0
         this.scoreNewText = this.color === "red" ? "Red" : "Blue"
         this.scoreTextEl = document.getElementById(`${this.color}-score`)
@@ -22,15 +20,7 @@ class Player {
     }
 
     setScore(socket, game) {
-        // socket.on("slap", data => {
-        //     if (data.color === this.color) {
-        //         this.score = data.scoreValue
-        //         this.scoreTextEl.innerText = `${this.scoreNewText} SCORE: ${data.scoreValue}`
-        //     }
-        // })
-
-        // this.color = blue
-        socket.on("slap", data => { // red data
+        socket.on("slap", data => {
             if (data.color === "red") {
                 game.score["red"] = data.scoreValue
             } else {

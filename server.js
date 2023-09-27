@@ -142,12 +142,17 @@ io.on('connection', (socket) => {
     socket.broadcast.emit('draw-new', cardData);
   });
 
-  socket.on('game', (game) => {
-    console.log("game info", game)
-
-    // Emit the game to all other clients
-    socket.broadcast.emit('game', game);
+  socket.on('game-over', (boolean) => {
+    // Emit the if gameover to all other clients
+    socket.broadcast.emit('force-gameover', boolean);
   });
+
+  // socket.on('game', (game) => {
+  //   console.log("game info", game)
+
+  //   // Emit the game to all other clients
+  //   socket.broadcast.emit('game', game);
+  // });
 
   socket.on('disconnect', () => {
     // console.log(`Player ${playerIndex} Disconnected`);

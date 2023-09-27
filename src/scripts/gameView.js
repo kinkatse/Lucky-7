@@ -4,9 +4,7 @@ import AudioUtil from "./audioUtil"
 import { io } from "socket.io-client"
 
 class GameView {
-    constructor (ctx, video) {
-        // this.video = video
-        this.ctx = ctx
+    constructor () {
         this.socket = io.connect(window.location.origin);
         this.mode = "easy"
         this.elements = {
@@ -22,24 +20,21 @@ class GameView {
         }
 
         this.connectPlayers()
-        // this.playersJoined()
         // this.addJoinRoomEventListener()
-        // this.testSocket()
     }
 
     connectPlayers() {
         // First player connected, then second player connected
         this.socket.on("connect-player", color => {
+            console.log("Connecting player")
             this.elements['playButtons'].style.display = "flex"
             this.elements['waiting'].style.display = "none"
-            console.log("Connecting player")
             if (color === "red") {
                 this.player = new Player("red")
-                this.playersJoined()
             } else {
                 this.player = new Player("blue")
-                this.playersJoined()
             }
+            this.playersJoined()
         })
 
         // After game starts, the 2nd player receives this so it can create player instance
@@ -63,7 +58,6 @@ class GameView {
 
         this.socket.on("draw-new", cardData => {
             console.log("Received a new card")
-            // this.game.deck_id = cardData.deck_id
             this.game.drawnCard = cardData.card
             this.game.remaining = cardData.remaining
         })
@@ -111,9 +105,10 @@ class GameView {
         this.elements['gameOver'].style.display = "none"
         this.elements['winner'].style.display = "none"
         this.elements['slap'].style.display = "block"
-        this.elements['stopDealer'].style.display = "block"
         this.elements['playButtons'].style.display = "none"
         this.elements['playAgain'].style.display = "none"
+
+        if (this.game.client === "host") this.elements['stopDealer'].style.display = "block"
     }
 
 }

@@ -2,10 +2,7 @@ import AudioUtil from "./audioUtil"
 
 class Game {
     constructor(player, elements, socket) {
-        // this.ctx = ctx
         this.difficultySpeed = 1000 // 1500 slow speed // 1000 medium speed // 500 fast speed
-        // this.playerRed = playerRed
-        // this.playerBlue = playerBlue
         this.player = player
         this.score = { red: 0, blue: 0 }
         this.socket = socket
@@ -14,8 +11,6 @@ class Game {
         this.topDeck = []
         this.beforeDeck = []
 
-        // this.redSlapEl = this.elements['redSlap']
-        // this.blueSlapEl = this.elements['blueSlap']
         this.slapEl = this.elements['slap']
         this.prevFiveEl = document.getElementById("prev-fifth")
         this.prevFourEl = document.getElementById("prev-four")
@@ -23,6 +18,13 @@ class Game {
         this.prevTwoEl = document.getElementById("prev-two")
         this.prevOneEl = document.getElementById("prev-one")
         this.topEl = document.getElementById("top")
+
+        this.socket.on("force-gameover", (endGame) => {
+            if (endGame) {
+                this.remaining = 0
+                this.checkGameOver()
+            }
+        })
     }
 
     resetToDefault(mode) {
@@ -30,9 +32,9 @@ class Game {
         this.drawnCard = null
         this.discard = []
         this.topDeck = []
+        this.beforeDeck = []
+        this.client = ""
         this.player.resetPlayer()
-        // this.playerRed.resetPlayer()
-        // this.playerBlue.resetPlayer()
         
         this.prevFiveEl.dataset.card = null
         this.prevFourEl.dataset.card = null
@@ -66,6 +68,7 @@ class Game {
 
     async startGame(mode) {
         this.resetToDefault(mode)
+        this.client = "host"
         
         await this.shuffleDecks()
         
@@ -81,9 +84,17 @@ class Game {
 
     async connectGame(mode) {
         this.resetToDefault(mode)
+        this.client = "entrant"
         
         this.slapEl.style.display = "block"
         this.buttonHandler = this.player.runEventListeners(this, this.socket)
+
+        // this.socket.on("force-gameover", (endGame) => {
+        //     if (endGame) {
+        //         this.remaining = 0
+        //         this.checkGameOver()
+        //     }
+        // })
 
         this.player.setScore(this.socket, this)
         this.updateCardLoop()
@@ -113,6 +124,7 @@ class Game {
             AudioUtil.playClickButton()
             this.remaining = 0
             this.checkGameOver()
+            this.socket.emit("game-over", true)
         })
     }
 
@@ -120,22 +132,15 @@ class Game {
         this.interval = setInterval(async () => {
             if (!this.drawnCard) return
             AudioUtil.playDealCard()
-            // Updating our array of cards to keep track of for point value
             this.topDeck.unshift(this.drawnCard)
             if (this.topDeck.length > 3) this.topDeck.pop()
             this.placeCard()
             this.checkGameOver()
         }, this.difficultySpeed)
-
-        this.elements['stopDealer'].addEventListener("click", (e) => {
-            AudioUtil.playClickButton()
-            this.remaining = 0
-            this.checkGameOver()
-        })
     }
 
     checkGameOver() {
-        if (this.score["red"] > 10 || this.score["blue"] > 10 || this.remaining === 0) {
+        if (this.score["red"] > 76 || this.score["blue"] > 76 || this.remaining === 0) {
             this.gameOver()
         }
     }
@@ -164,9 +169,15 @@ class Game {
         }
 
         winner.style.display = "block";
-        this.elements['gameOver'].style.display = "block";
-        this.elements['playAgain'].style.display = "block";
-        this.elements['playButtons'].style.display = "flex";
+        console.log(this.client)
+        if (this.client === "host") {
+            this.elements['gameOver'].style.display = "block";
+            this.elements['playAgain'].style.display = "block";
+            this.elements['playButtons'].style.display = "flex";
+        } else {
+            this.elements['gameOver'].style.display = "block";
+            this.elements['waiting'].style.display = "block";
+        }
     }
 
     async drawTempCard() {
