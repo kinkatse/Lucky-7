@@ -72,7 +72,7 @@ class Game {
         
         this.slapEl.style.display = "block"
 
-        // Save reference to eventHander for removing it later
+        // Save reference to eventHandler for removing it later
         this.buttonHandler = this.player.runEventListeners(this, this.socket)
 
         this.player.setScore(this.socket, this)
@@ -99,7 +99,7 @@ class Game {
             }
             // Updating our array of cards to keep track of for point value
             this.topDeck.unshift(this.drawnCard)
-            if (this.topDeck.length > 3) this.topDeck.pop()
+            if (this.topDeck.length > 5) this.topDeck.pop()
             this.placeCard()
             this.checkGameOver()
         }, this.difficultySpeed)
@@ -159,30 +159,17 @@ class Game {
         this.prevOneEl.children[0].classList.add("second")
         this.topEl.children[0].classList.add("top")
 
-        if (this.prevFourEl.dataset.card) {
-            this.prevFiveEl.dataset.card = this.prevFourEl.dataset.card
-            this.prevFiveEl.children[0].src = this.prevFourEl.children[0].src
-        }
-        if (this.prevThreeEl.dataset.card) {
-            this.prevFourEl.dataset.card = this.prevThreeEl.dataset.card
-            this.prevFourEl.children[0].src = this.prevThreeEl.children[0].src
-        }
-        if (this.prevTwoEl.dataset.card) {
-            // All cards at this point are irrelevant so we can add to discard pile
-            this.discard.push(this.prevTwoEl.dataset.card)
-            this.prevThreeEl.dataset.card = this.prevTwoEl.dataset.card
-            this.prevThreeEl.children[0].src = this.prevTwoEl.children[0].src
-        }
-        if (this.prevOneEl.dataset.card) {
-            this.prevTwoEl.dataset.card = this.prevOneEl.dataset.card
-            this.prevTwoEl.children[0].src = this.prevOneEl.children[0].src
-        }
-        if (this.topEl.dataset.card) {
-            this.prevOneEl.dataset.card = this.topEl.dataset.card
-            this.prevOneEl.children[0].src = this.topEl.children[0].src
-        }
-        this.topEl.dataset.card = `${this.drawnCard.value} ${this.drawnCard.suit}`
-        this.topEl.children[0].src = this.drawnCard.image
+
+        if (this.topDeck[4])
+            this.prevFourEl.children[0].src = this.topDeck[4].image
+        if (this.topDeck[3])
+            this.prevThreeEl.children[0].src = this.topDeck[3].image
+        if (this.topDeck[2])
+            this.prevTwoEl.children[0].src = this.topDeck[2].image
+        if (this.topDeck[1])
+            this.prevOneEl.children[0].src = this.topDeck[1].image
+        this.topEl.children[0].src = this.topDeck[0].image
+
     }
 
     checkGameOver() {

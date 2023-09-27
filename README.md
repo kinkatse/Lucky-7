@@ -12,7 +12,7 @@ This is a card game that is similar to SlapJack. Whichever player slaps the stac
 - Lucky 7 is where all top 3 cards of the deck are 7s - 77 Points (Auto win)
 - NOTE: Multiple points can be accumulated!
     - For example: 929 would be 9 points, 7A7 would be 11 Points, KKK where the last two Kings are the same suit as well is 17 points
-- Should a player slap on something with no value, that will be a deduction of points - -10 Points
+- Should a player slap on something with no value, that will be a deduction of points - -2 Points
 - BONUS: There will be a random card generator indicator at the top of the screen, this is a jackpot card so if you hit it when you see this card (only if it fulfills other requirements as well), then you get 2x points!
 
 ## How to Set Up/Play:
@@ -60,15 +60,6 @@ This is a card game that is similar to SlapJack. Whichever player slaps the stac
 ### Intended Technologies for the Future:
 - Canvas
 - TensorFlow
-
-## Actual Timeline:
-- 15 minutes planning
-- 15 minutes setup
-- 1.5 hour game logic
-- 30 minutes styling + audio
-- 1 hour researching socketIO
-- 1.5 minutes implementing live tracking of score and game
-    - Lot's of time went to debugging
 
 ## Future Implementations:
 - I would like to take more time in understanding SocketIO to get more practice and develop better live interaction
