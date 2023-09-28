@@ -115,7 +115,7 @@ class Game {
     }
 
     checkGameOver() {
-        if (this.playerRed.score > 10 || this.playerBlue.score > 10 || this.remaining === 0) {
+        if (this.playerRed.score > 76 || this.playerBlue.score > 76 || this.remaining === 0) {
             this.gameOver()
         }
     }

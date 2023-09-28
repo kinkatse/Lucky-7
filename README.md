@@ -89,4 +89,3 @@ This is a card game that is similar to SlapJack. Whichever player slaps the stac
 
 ## Closing Thoughts:
 - Thank you for giving me this opportunity to challenge myself. This was very stressful and made me grow more even if I didn't accomplish a finished product in time. I am excited to continue working on this and show more progress throughout the week! Keep in tuned!
-- NOTE: If I do make edits, I will make a branch so the main branch will be what should be assessed. Any changes and commits will be on that new branch and made available (with instructions to get to it) on the end of this ReadME.
