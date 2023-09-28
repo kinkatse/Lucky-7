@@ -75,3 +75,8 @@ This is a card game that is similar to SlapJack. Whichever player slaps the stac
 
 ## Closing Thoughts:
 - Thank you for giving me this opportunity to challenge myself. This was very stressful and made me grow more even if I didn't accomplish a finished product in time. I am excited to continue working on this and show more progress throughout the week! Keep in tuned!
+
+## Branch:
+- before-sockets: This is before I improved the socket code and is the submittion for the code challenge
+- work-on-sockets: Was me playing around with sockets and trying to understand it more
+- fix-sockets: Was using sockets to fix a bunch of issues and refactor a lot of code
